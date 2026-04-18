@@ -1,47 +1,22 @@
 # FastAPI - Router, Business Logic, Data Access Model
 
-This repository demonstrates a clean, scalable way to structure a FastAPI application using a three-tiered architecture:
-
-- Routers (API layer)
-- Business Logic (service layer)
-- Data Access (persistence layer)
-
-The goal is to provide a structure that is:
-
-- Easy to reason about
-- Scalable as features grow
-- Explicit about responsibilities
-- Friendly to collaboration
+This repository demonstrates a scalable way to structure a FastAPI application using a three-tiered architecture.
 
 <p align="center">
-  <img src="docs/diagram.png">
+  <img src="docs/diagram.drawio.png">
 </p>
 
 ## Core Concepts
 
-### 1. Three-Tier Separation
+**Three-Tier Separation**
 
-Each layer has a clearly defined responsibility:
+Each layer has a clearly defined responsibility.
 
-**Routers (src/routers)**
+The **router** layer defines API endpoints, performs request validation via Pydantic, invokes functions from the business logic layer, and formats HTTP responses.
 
-- Define API endpoints
-- Handle request/response formatting
-- Perform input validation (via Pydantic)
-- Call into business logic
+The **business logic** layer contains the core application logic. This layer orchestrates workflows, enforces rules, and invokes functions from the data access layer to retrieve application data.
 
-**Business Logic (src/business_logic)**
-
-- Contains the core application logic
-- Orchestrates workflows
-- Enforces rules and validations
-- Calls data access layer
-
-**Data Access (src/data_access)**
-
-- Responsible for interacting with the database
-- Executes queries
-- Maps raw data to structured models
+The **data access** layer is responsible for interacting with the database. This layer executes database queries and maps raw data to structured models via Pydantic.
 
 ### 2. Domain Driven Structure
 
