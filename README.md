@@ -182,6 +182,14 @@ This approach works best when:
 
 For very small projects, this structure may feel heavy—but it becomes valuable quickly as complexity increases.
 
+## Running a Test Server
+
+Start the test server using the following command:
+
+```sh
+uv run fastapi dev src/main.py
+```
+
 ## Testing Strategy
 
 This repository uses pytest + FastAPI’s dependency injection system to enable clean, isolated testing.

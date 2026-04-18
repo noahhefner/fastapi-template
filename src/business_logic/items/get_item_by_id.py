@@ -15,14 +15,10 @@ def get_item_by_id(
     id: UUID,
 ) -> BusinessModels.GetItemByID:
     """
-    Retrieves an item by ID, translating data access errors and returning a
-    business model.
+    Retrieves an item by ID, translating data access errors and returning a business model.
     """
     try:
-        item: ItemDataAccessModels.GetItemByID = DataAccess.get_item_by_id(
-            db,
-            id,
-        )
+        item: ItemDataAccessModels.GetItemByID = DataAccess.get_item_by_id(db, id)
     except CommonDataAccessErrors.DatabaseError as e:
         raise CommonBusinessLogicErrors.DatabaseError(str(e)) from e
     except DataAccessErrors.ItemNotFound as e:

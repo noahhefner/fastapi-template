@@ -22,8 +22,7 @@ def get_item_by_id(
     user: User = Depends(get_user),
 ):
     """
-    Retrieves an item by ID and converts domain errors into appropriate HTTP
-    responses.
+    Retrieves an item by ID and converts business logic errors into appropriate HTTP responses.
     """
     try:
         item: BusinessModels.GetItemByID = BusinessLogic.get_item_by_id(

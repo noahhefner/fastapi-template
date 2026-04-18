@@ -1,22 +1,25 @@
 [project]
 name = "fast-api-tests"
 version = "0.1.0"
-description = "Add your description here"
+description = "FastAPI Project Repository Example"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
-    "fastapi[standard]>=0.135.2",
+    "fastapi[standard]>=0.136.0",
     "httpx>=0.28.1",
-    "pytest>=9.0.2",
 ]
 
 [dependency-groups]
 dev = [
     "isort>=8.0.1",
-    "ruff>=0.15.8",
-    "ty>=0.0.26",
-    "uv-upsync>=2.2.0",
+    "pytest>=9.0.3",
+    "ruff>=0.15.11",
+    "ty>=0.0.31",
+    "uv-upsync>=2.3.2",
 ]
 
 [tool.pytest.ini_options]
 pythonpath = ["."]
+
+[tool.ruff]
+line-length = 100

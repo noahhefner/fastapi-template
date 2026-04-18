@@ -14,3 +14,6 @@ database.db
 
 # Tooling
 .ruff_cache/
+
+# Testing
+.pytest_cache/

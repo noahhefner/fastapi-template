@@ -8,10 +8,10 @@ import src.data_access.items.models as DataAccessModels
 
 def get_item_by_id(db: sqlite3.Connection, id: UUID) -> DataAccessModels.GetItemByID:
     """
-    Fetches an item by ID from the database or raises an error if not found.
+    Fetches an item by ID from the database or raises an error.
     """
     try:
-        cursor = db.execute(
+        cursor: sqlite3.Cursor = db.execute(
             "SELECT id, name, quantity FROM items WHERE id = ?",
             (str(id),),
         )

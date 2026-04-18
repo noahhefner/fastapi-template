@@ -8,10 +8,10 @@ import src.data_access.orders.models as DataAccessModels
 
 def get_order_by_id(db: sqlite3.Connection, id: UUID) -> DataAccessModels.GetOrderByID:
     """
-    Fetches an order by ID from the database or raises an error if not found.
+    Fetches an order by ID from the database or raises an error.
     """
     try:
-        cursor = db.execute(
+        cursor: sqlite3.Cursor = db.execute(
             "SELECT id, address, placed_on FROM orders WHERE id = ?",
             (str(id),),
         )
