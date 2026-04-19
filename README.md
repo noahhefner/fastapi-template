@@ -1,4 +1,4 @@
-# FastAPI - Router, Business Logic, Data Access Model
+# FastAPI Repository Structure
 
 This repository demonstrates a scalable way to structure a FastAPI application using a three-tiered architecture.
 
@@ -8,7 +8,7 @@ This repository demonstrates a scalable way to structure a FastAPI application u
 
 ## Core Concepts
 
-**Three-Tier Separation**
+### Separation of Concerns in Three Layers
 
 Each layer has a clearly defined responsibility.
 
@@ -18,144 +18,86 @@ The **business logic** layer contains the core application logic. This layer orc
 
 The **data access** layer is responsible for interacting with the database. This layer executes database queries and maps raw data to structured models via Pydantic.
 
-### 2. Domain Driven Structure
+### Domain-First Directory Structure
 
-Instead of organizing code by technical type (e.g., all routers together, all services together), this repository organizes code by **domain**.
+REST API's often expose endpoints for multiple business **domains**. A domain is simply a functional area of the API. (In this repository, the two domains are `items` and `orders`.)
 
-A **domain** represents a functional area of the API.
-
-Examples:
-
-- `/api/items` -> `items` domain
-- `/api/orders` -> `orders` domain
-
-Each layer contains a `domains` directory, and each domain has its own isolated implementation per layer:
+It is common in FastAPI projects to place data models in their own top-level directory at the root of the project. Do a quick Google search for "how to structure FastAPI project" and you'll see many examples that look something like this:
 
 ```
-domains/
-  items/
-  orders/
+my_fastapi_project/
+├── app/
+│   ├── __init__.py
+│   ├── main.py
+│   ├── dependencies.py
+│   ├── routers/
+│   │   ├── __init__.py
+│   │   ├── users.py
+│   │   └── items.py
+│   ├── internal/
+│   │   ├── __init__.py
+│   │   └── admin.py
+│   ├── core/
+│   │   ├── __init__.py
+│   │   ├── config.py
+│   │   └── security.py
+│   ├── models/
+│   │   ├── __init__.py
+│   │   ├── user.py
+│   │   └── item.py
+│   ├── schemas/
+│   │   ├── __init__.py
+│   │   ├── user.py
+│   │   └── item.py
+│   ├── services/
+│   │   ├── __init__.py
+│   │   ├── user_service.py
+│   │   └── item_service.py
+│   └── db/
+│       ├── __init__.py
+│       ├── database.py
+│       └── migrations/
+├── tests/
+│   ├── __init__.py
+│   ├── test_main.py
+│   ├── test_users.py
+│   ├── test_items.py
+├── .env
+├── .gitignore
+├── requirements.txt
+├── README.md
+└── run.sh
 ```
 
-This provides:
+This repository takes a different approach by colocating data models with the code that uses them, rather than placing them in a separate, centralized directory.
 
-- Clear separation of features
-- Easier navigation
-- Better scalability as domains grow independently
+Within each layer, domains serve as the primary organizational unit. All related code—including models and errors—lives within the corresponding domain directory for that layer.
 
-### 3. Co-Located Models (No Global Schema Directory)
-
-A key design choice in this repo is:
-
-    Models live in the layer that owns them.
-
-Instead of having a global `models/` or `schemas/` directory, each layer defines its own models:
+Consider, for example, the `data_access` directory:
 
 ```
-business_logic/models
-data_access/models
-routers/response_models
+├── data_access
+│   ├── errors                 <- Global errors used by all domains
+│   │   ├── database_error.py
+│   ├── items                  <- Items domain directory
+│   │   ├── errors             <- Items domain errors
+│   │   │   ├── __init__.py
+│   │   │   ├── item_not_found.py
+│   │   ├── get_item_by_id.py  <- Items data access logic
+│   │   ├── __init__.py
+│   │   ├── models             <- Items data access models
+│   │   │   ├── get_item_by_id.py
+│   │   │   ├── __init__.py
+│   └── orders                 <- Orders domain directory
+│       ├── errors
+│       │   ├── __init__.py
+│       │   ├── order_not_found.py
+│       ├── get_order_by_id.py
+│       ├── __init__.py
+│       ├── models
+│       │   ├── get_order_by_id.py
+│       │   ├── __init__.py
 ```
-
-**Why this matters:**
-
-- **Encapsulation**: Each layer controls its own data structures
-- **Decoupling**: Changes in one layer don't leak into others
-- **Clarity**: Models are defined close to where they are used
-
-**Examples:**
-
-- Data Access models → represent database rows
-- Business Logic models → represent domain concepts
-- Router models → represent API contracts
-
-These models may look similar, but they serve **different purposes** and should not be tightly coupled.
-
-### 4. Layer-Specific Errors
-
-Each layer also defines its own errors:
-
-```
-business_logic/errors
-data_access/errors
-```
-
-This allows:
-
-- Proper abstraction of failures
-- Clean error translation between layers
-- Avoiding leakage of low-level details (e.g., SQL errors reaching API responses)
-
-## Repository Structure
-
-```
-src
-├───business_logic
-│   ├───domains
-│   │   ├───items
-│   │   └───orders
-│   ├───errors
-│   └───models
-├───data_access
-│   ├───domains
-│   │   ├───items
-│   │   └───orders
-│   ├───errors
-│   └───models
-└───routers
-    ├───domains
-    │   ├───items
-    │   └───orders
-    └───response_models
-```
-
-## Request Flow
-
-A typical request flows like this:
-
-```
-Client Request
-    ↓
-Router (validation + HTTP concerns)
-    ↓
-Business Logic (rules, orchestration)
-    ↓
-Data Access (database interaction)
-    ↓
-Business Logic (processing)
-    ↓
-Router (response formatting)
-    ↓
-Client Response
-```
-
-## Why This Approach?
-
-This structure is designed to solve common problems in growing FastAPI projects:
-
-**Without structure:**
-
-- Business logic leaks into routers
-- Database logic spreads everywhere
-- Models become tightly coupled
-- Code becomes hard to maintain
-
-**With this structure:**
-
-- Clear boundaries between concerns
-- Easier testing (mock layers independently)
-- Better long-term maintainability
-- Scales cleanly with new domains
-
-## When to Use This
-
-This approach works best when:
-
-- Your API has multiple domains (e.g., users, orders, payments)
-- Business logic is non-trivial
-- You expect the project to grow
-
-For very small projects, this structure may feel heavy—but it becomes valuable quickly as complexity increases.
 
 ## Running a Test Server
 
@@ -167,30 +109,14 @@ uv run fastapi dev src/main.py
 
 ## Testing Strategy
 
-This repository uses pytest + FastAPI’s dependency injection system to enable clean, isolated testing.
-
 To run the tests:
 
 ```sh
 uv run pytest
 ```
 
-The goal is:
+## TODO List:
 
-- Each test runs against a fresh database
-- No shared state between tests
-- No reliance on application startup side-effects
-- Tests remain fast and deterministic
-
-This aligns with the overall architecture:
-
-- Routers are tested via HTTP calls
-- Business logic remains independent and testable in isolation
-- Data access is exercised against a real (but temporary) database
-
-Benefits:
-
-- No mocking required for basic integration tests
-- Realistic behavior (actual SQL execution)
-- Fully isolated test environment
-- Scales to other databases (PostgreSQL, etc.)
+- [ ] Document how to handle dependencies
+- [ ] Create a database wrapper object using Protocols to enable multiple database implementations
+- [ ] Better test documentation
