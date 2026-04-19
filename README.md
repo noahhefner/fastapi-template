@@ -1,28 +1,26 @@
 # FastAPI Repository Structure
 
-This repository demonstrates a scalable way to structure a FastAPI application using a three-tiered architecture.
+This repository demonstrates a scalable way to structure a FastAPI application.
 
 <p align="center">
   <img src="docs/diagram.drawio.png">
 </p>
 
-## Core Concepts
+## Separation of Concerns in Three Layers
 
-### Separation of Concerns in Three Layers
+The **router** layer defines API endpoints, performs request validation via Pydantic, invokes functions from the business logic layer, and formats HTTP responses. The router layer response models define the shape of the data that is returned to the client. The router layer errors define erroneous responses.
 
-Each layer has a clearly defined responsibility.
+The **business logic** layer contains the core application logic. This layer orchestrates workflows, enforces rules, and invokes functions from the data access layer to retrieve application data. The business logic layer sends data back to the router layer through business logic models and errors.
 
-The **router** layer defines API endpoints, performs request validation via Pydantic, invokes functions from the business logic layer, and formats HTTP responses.
+The **data access** layer is responsible for interacting with the database. This layer executes database queries and maps raw data to structured models via Pydantic. The data access layer sends data back to the business logic layer through data access models and errors.
 
-The **business logic** layer contains the core application logic. This layer orchestrates workflows, enforces rules, and invokes functions from the data access layer to retrieve application data.
+This three-layered approach provides gaurd rails for organizing code by logical function, making large repositories easier to reason about.
 
-The **data access** layer is responsible for interacting with the database. This layer executes database queries and maps raw data to structured models via Pydantic.
+## Domain-First Directory Structure
 
-### Domain-First Directory Structure
+REST API's often expose endpoints for multiple business **domains**. A domain is simply a functional area of the API. In this repository, the two example domains are `items` and `orders`.
 
-REST API's often expose endpoints for multiple business **domains**. A domain is simply a functional area of the API. (In this repository, the two domains are `items` and `orders`.)
-
-It is common in FastAPI projects to place data models in their own top-level directory at the root of the project. Do a quick Google search for "how to structure FastAPI project" and you'll see many examples that look something like this:
+In many FastAPI projects, data models are placed in their own top-level directory at the root of the project. A quick search for “how to structure a FastAPI project” turns up many examples that look something like this:
 
 ```
 my_fastapi_project/
@@ -69,35 +67,64 @@ my_fastapi_project/
 └── run.sh
 ```
 
-This repository takes a different approach by colocating data models with the code that uses them, rather than placing them in a separate, centralized directory.
+More often than not, subdirectories are eventually added under `/models` and `/schemas` as the API grows. Router logic, such as `/routers/items.py`, may also be split into smaller files. Over time, this can make the repository harder to navigate because developers have to keep track of multiple directory structures for related code. This kind of layered structure is common in FastAPI examples and best-practice guides.
 
-Within each layer, domains serve as the primary organizational unit. All related code—including models and errors—lives within the corresponding domain directory for that layer.
+This repository takes a different approach by colocating data models with the code that uses them, rather than placing them in a separate, centralized directory. This reduces the need for developers to maintain multiple directory trees for related code, making the project easier to navigate and evolve as it grows.
+
+Within each layer, **domains** serve as the primary organizational unit. All related code—including models and errors—lives within the corresponding domain directory for that layer.
 
 Consider, for example, the `data_access` directory:
 
 ```
 ├── data_access
-│   ├── errors                 <- Global errors used by all domains
+│   ├── errors
 │   │   ├── database_error.py
-│   ├── items                  <- Items domain directory
-│   │   ├── errors             <- Items domain errors
+│   │   └── __init__.py
+│   ├── items                      <- Items domain
+│   │   ├── errors                 <- Items data access errors
 │   │   │   ├── __init__.py
-│   │   │   ├── item_not_found.py
-│   │   ├── get_item_by_id.py  <- Items data access logic
+│   │   │   └── item_not_found.py
+│   │   ├── get_item_by_id.py      <- Items data access code
 │   │   ├── __init__.py
-│   │   ├── models             <- Items data access models
-│   │   │   ├── get_item_by_id.py
-│   │   │   ├── __init__.py
-│   └── orders                 <- Orders domain directory
-│       ├── errors
+│   │   └── models                 <- Items data access models
+│   │       ├── get_item_by_id.py
+│   │       └── __init__.py
+│   └── orders                     <- Orders domain
+│       ├── errors                 <- Orders data access errors
 │       │   ├── __init__.py
-│       │   ├── order_not_found.py
-│       ├── get_order_by_id.py
+│       │   └── order_not_found.py
+│       ├── get_order_by_id.py     <- Orders data access code
 │       ├── __init__.py
-│       ├── models
-│       │   ├── get_order_by_id.py
-│       │   ├── __init__.py
+│       └── models                 <- Orders data access models
+│           ├── get_order_by_id.py
+│           └── __init__.py
 ```
+
+Another advantage of organizing layers by domain is that each layer can follow the same general directory structure. This makes individual layers feel consistent and easier to work with, reducing cognitive load. Notice how the router layer directory looks almost identical to the data access layer directory:
+
+```
+└── routers
+    ├── items                      <- Items domain
+    │   ├── get_item_by_id.py      <- Items router code
+    │   ├── __init__.py
+    │   ├── response_models        <- Items response models
+    │   │   ├── get_item_by_id.py
+    │   │   └── __init__.py
+    │   └── test_get_item_by_id.py
+    └── orders                     <- Orders domain
+        ├── get_order_by_id.py     <- Order router code
+        ├── __init__.py
+        ├── response_models        <- Orders response models
+        │   ├── get_order_by_id.py
+        │   └── __init__.py
+        └── test_get_order_by_id.py
+```
+
+## When To Use This Structure (And When Not To)
+
+I created this example repository because I was frustrated with the poor developer ergonomics of the FastAPI “best-practice” layouts like the one shown above, especially in larger codebases. In my view, this structure strikes a practical balance between organizing code by function—such as routing, business logic, and data access—and organizing it by business domain. Although it does introduce some repetition in directory structure across the three layers, I think that tradeoff is worthwhile because the layout stays consistent from one layer to the next.
+
+If you’re building a proof of concept or your project only has a few domains, this repository structure will likely slow you down. For an MVP or a single-domain API, it’s usually better to stick with the simpler examples you see online. But if your API has many domains, or if you expect it to grow in scope over time, it may be worth investing up front in a more substantial organizational structure.
 
 ## Running a Test Server
 
@@ -107,7 +134,7 @@ Start the test server using the following command:
 uv run fastapi dev src/main.py
 ```
 
-## Testing Strategy
+## Testing
 
 To run the tests:
 
@@ -118,5 +145,4 @@ uv run pytest
 ## TODO List:
 
 - [ ] Document how to handle dependencies
-- [ ] Create a database wrapper object using Protocols to enable multiple database implementations
 - [ ] Better test documentation

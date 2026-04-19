@@ -100,6 +100,7 @@ dependencies = [
 [package.dev-dependencies]
 dev = [
     { name = "isort" },
+    { name = "pyclean" },
     { name = "pytest" },
     { name = "ruff" },
     { name = "ty" },
@@ -115,6 +116,7 @@ requires-dist = [
 [package.metadata.requires-dev]
 dev = [
     { name = "isort", specifier = ">=8.0.1" },
+    { name = "pyclean", specifier = ">=3.6.0" },
     { name = "pytest", specifier = ">=9.0.3" },
     { name = "ruff", specifier = ">=0.15.11" },
     { name = "ty", specifier = ">=0.0.31" },
@@ -432,6 +434,15 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/f9/e2/3e91f31a7d2b083fe6ef3fa267035b518369d9511ffab804f839851d2779/pluggy-1.6.0.tar.gz", hash = "sha256:7dcc130b76258d33b90f61b658791dede3486c3e6bfb003ee5c9bfb396dd22f3", size = 69412, upload-time = "2025-05-15T12:30:07.975Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/54/20/4d324d65cc6d9205fabedc306948156824eb9f0ee1633355a8f7ec5c66bf/pluggy-1.6.0-py3-none-any.whl", hash = "sha256:e920276dd6813095e9377c0bc5566d94c932c33b27a3e3945d8389c374dd4746", size = 20538, upload-time = "2025-05-15T12:30:06.134Z" },
+]
+
+[[package]]
+name = "pyclean"
+version = "3.6.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/53/0d/7690e519b66101c41c114e2ddbf144f9b4ff6ea938fb199c09ed958f3970/pyclean-3.6.0.tar.gz", hash = "sha256:a46c179be187999d50d2d3362b2c94856e60f77de32ca7ec2db4eeb16bc39199", size = 27000, upload-time = "2026-03-30T17:34:30.509Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/35/2a/1797004bb000db555bd45e38550b3ca10699f87e22a78e6753882e0ac2cf/pyclean-3.6.0-py3-none-any.whl", hash = "sha256:3e5f9c83f2472df5bdafa78ed533bd38690756e0a7b3b6f11c8b29c9affc728b", size = 27750, upload-time = "2026-03-30T17:34:29.034Z" },
 ]
 
 [[package]]
