@@ -9,12 +9,18 @@ import src.business_logic.orders.errors as BusinessErrors
 import src.business_logic.orders.models as BusinessModels
 import src.routers.orders.response_models as ResponseModels
 from src.dependencies.get_db import get_db
+from src.dependencies.get_user import (get_user, User)
+
 
 router = APIRouter()
 
 
 @router.get("/{id}", response_model=ResponseModels.GetOrderByID)
-def get_order_by_id(id: UUID, db: sqlite3.Connection = Depends(get_db)):
+def get_order_by_id(
+    id: UUID,
+    db: sqlite3.Connection = Depends(get_db),
+    user: User = Depends(get_user),
+):
     """
     Retrieves an order by ID and converts domain errors into appropriate HTTP
     responses.
