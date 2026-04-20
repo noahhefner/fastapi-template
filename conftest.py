@@ -4,7 +4,7 @@ import tempfile
 import pytest
 from fastapi.testclient import TestClient
 
-from src.db import get_db
+from src.dependencies.get_db import get_db
 from src.main import app
 
 

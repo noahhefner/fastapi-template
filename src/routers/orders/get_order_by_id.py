@@ -8,7 +8,7 @@ import src.business_logic.orders as BusinessLogic
 import src.business_logic.orders.errors as BusinessErrors
 import src.business_logic.orders.models as BusinessModels
 import src.routers.orders.response_models as ResponseModels
-from src.db import get_db
+from src.dependencies.get_db import get_db
 
 router = APIRouter()
 

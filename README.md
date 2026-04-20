@@ -1,6 +1,6 @@
 # FastAPI Repository Structure
 
-This repository demonstrates a scalable way to structure a FastAPI application.
+This repository presents a scalable way to structure a RESTful FastAPI application.
 
 <p align="center">
   <img src="docs/diagram.drawio.png">
@@ -18,9 +18,9 @@ This three-layered approach provides gaurd rails for organizing code by logical 
 
 ## Domain-First Directory Structure
 
-REST API's often expose endpoints for multiple business **domains**. A domain is simply a functional area of the API. In this repository, the two example domains are `items` and `orders`.
+REST API's often expose endpoints for multiple business **domains**. A domain is simply a functional area of the API. (In this repository, the two example domains are `items` and `orders`.)
 
-In many FastAPI projects, data models are placed in their own top-level directory at the root of the project. A quick search for “how to structure a FastAPI project” turns up many examples that look something like this:
+In many FastAPI projects, data models for all domains are placed in a single top-level directory at the root of the project. A quick search for “how to structure a FastAPI project” turns up many examples that look something like this:
 
 ```
 my_fastapi_project/
@@ -67,17 +67,17 @@ my_fastapi_project/
 └── run.sh
 ```
 
-More often than not, subdirectories are eventually added under `/models` and `/schemas` as the API grows. Router logic, such as `/routers/items.py`, may also be split into smaller files. Over time, this can make the repository harder to navigate because developers have to keep track of multiple directory structures for related code. This kind of layered structure is common in FastAPI examples and best-practice guides.
+More often than not, subdirectories are eventually added under `/models` and `/schemas` as the API grows. Similarly, router logic, such as `/routers/items.py`, may also be split into smaller files. Over time, this can make the repository harder to navigate because developers have to keep track of multiple directory structures for related code.
 
-This repository takes a different approach by colocating data models with the code that uses them, rather than placing them in a separate, centralized directory. This reduces the need for developers to maintain multiple directory trees for related code, making the project easier to navigate and evolve as it grows.
+This repository argues for a different approach. By colocating data models with the code that uses them, rather than placing them in a separate, centralized directory, developers no longer need to maintain multiple directory trees for related code, making the project easier to navigate and evolve as it grows.
 
 Within each layer, **domains** serve as the primary organizational unit. All related code—including models and errors—lives within the corresponding domain directory for that layer.
 
-Consider, for example, the `data_access` directory:
+Consider, for example, the `data_access` directory. In this directory, there is a subdirectory for the items domain and the orders domain. In each domain, there are subdirectories for data models and errors alongside the data access code. A "common errors" directory is also present for universal data access errors, like a database error.
 
 ```
 ├── data_access
-│   ├── errors
+│   ├── errors                     <- Common data access errors
 │   │   ├── database_error.py
 │   │   └── __init__.py
 │   ├── items                      <- Items domain
@@ -120,21 +120,14 @@ Another advantage of organizing layers by domain is that each layer can follow t
         └── test_get_order_by_id.py
 ```
 
-## When To Use This Structure (And When Not To)
-
-I created this example repository because I was frustrated with the poor developer ergonomics of the FastAPI “best-practice” layouts like the one shown above, especially in larger codebases. In my view, this structure strikes a practical balance between organizing code by function—such as routing, business logic, and data access—and organizing it by business domain. Although it does introduce some repetition in directory structure across the three layers, I think that tradeoff is worthwhile because the layout stays consistent from one layer to the next.
-
-If you’re building a proof of concept or your project only has a few domains, this repository structure will likely slow you down. For an MVP or a single-domain API, it’s usually better to stick with the simpler examples you see online. But if your API has many domains, or if you expect it to grow in scope over time, it may be worth investing up front in a more substantial organizational structure.
-
-## Running a Test Server
-
-Start the test server using the following command:
-
-```sh
-uv run fastapi dev src/main.py
-```
+> [!NOTE]
+> The logic for each layer is set up so that there is one function per file. This is a personal preference and not strictly necessary. For APIs with many endpoints, this layout helps prevent individual files from growing to thousands of lines in length.
 
 ## Testing
+
+[Pytest](https://docs.pytest.org/en/stable/) is used for testing the API endpoints. Following the same philosophy as the rest of the repository, test case files are colocated with the code they cover.
+
+A shared `conftest.py` overrides the `get_db` dependency, ensuring each test runs against a fresh database instance.
 
 To run the tests:
 
@@ -142,7 +135,16 @@ To run the tests:
 uv run pytest
 ```
 
-## TODO List:
+## Running the HTTP Server
 
-- [ ] Document how to handle dependencies
-- [ ] Better test documentation
+Start the server using the following command:
+
+```sh
+uv run fastapi dev src/main.py
+```
+
+## When To Use This Structure (And When Not To)
+
+I created this example repository because I was frustrated with the poor developer ergonomics of the FastAPI “best-practice” layouts like the one shown above, especially in larger codebases. In my view, this structure strikes a practical balance between organizing code by function—such as routing, business logic, and data access—and organizing it by business domain. Although it does introduce some repetition in directory structure across the three layers, I think that tradeoff is worthwhile because the layout stays consistent from one layer to the next.
+
+If you’re building a proof of concept or your project only has a few domains, this repository structure will likely slow you down. For an MVP or a single-domain API, it’s usually better to stick with the simpler examples you see online. But if your API has many domains, or if you expect it to grow in scope over time, it may be worth investing up front in a more substantial organizational structure.
