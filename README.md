@@ -84,9 +84,11 @@ Consider, for example, the `data_access` directory. In this directory, there is 
 │   │   ├── errors                 <- Items data access errors
 │   │   │   ├── __init__.py
 │   │   │   └── item_not_found.py
-│   │   ├── get_item_by_id.py      <- Items data access code
+│   │   ├── get_all_items.py      <- Items data access code
+|   |   ├── get_item_by_id.py
 │   │   ├── __init__.py
 │   │   └── models                 <- Items data access models
+│   │       ├── get_all_items.py
 │   │       ├── get_item_by_id.py
 │   │       └── __init__.py
 │   └── orders                     <- Orders domain
@@ -105,11 +107,14 @@ Another advantage of organizing layers by domain is that each layer can follow t
 ```
 └── routers
     ├── items                      <- Items domain
-    │   ├── get_item_by_id.py      <- Items router code
+    │   ├── get_all_items.py      <- Items router code
+    │   ├── get_item_by_id.py
     │   ├── __init__.py
     │   ├── response_models        <- Items response models
+    │   │   ├── get_all_items.py
     │   │   ├── get_item_by_id.py
     │   │   └── __init__.py
+    │   ├── test_get_all_items.py
     │   └── test_get_item_by_id.py
     └── orders                     <- Orders domain
         ├── get_order_by_id.py     <- Order router code
