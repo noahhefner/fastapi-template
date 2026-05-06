@@ -1,6 +1,14 @@
 from uuid import UUID
 
-from .models.user import User
+from pydantic import BaseModel
+
+
+class User(BaseModel):
+    """User information."""
+
+    id: UUID
+    username: str
+    display_name: str
 
 
 def get_user() -> User:
