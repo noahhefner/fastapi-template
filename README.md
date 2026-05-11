@@ -62,37 +62,36 @@ my_fastapi_project/
 
 While this works for small projects, as the API grows, developers often have to keep track of multiple parallel directory structures to work on a single feature.
 
-This repository argues for a different approach: **domains** serve as the primary organizational unit. All logic for a given domain is encapsulated within its own directory.
+This repository argues for a different approach: **domains** serve as the primary organizational unit. All logic for a given domain is encapsulated within its own directory:
 
 ```plaintext
 ├── domains
 │   ├── __init__.py
-│   ├── orders
-│   │   ├── get_all_orders
-│   │   │   ├── get_all_orders.py
+│   ├── items
+│   │   ├── get_all_items
 │   │   │   ├── __init__.py
-│   │   │   └── test_get_all_orders.py
-│   │   ├── get_order_by_id
-│   │   │   ├── get_order_by_id.py
+│   │   │   └── test_get_all_items.py
+│   │   ├── get_item_by_id
 │   │   │   ├── __init__.py
-│   │   │   └── test_get_order_by_id.py
+│   │   │   └── test_get_item_by_id.py
 │   │   └── __init__.py
-│   └── items
-│       ├── get_all_items
-│       │   ├── get_all_items.py
+│   └── orders
+│       ├── get_all_orders
 │       │   ├── __init__.py
-│       │   └── test_get_all_items.py
-│       ├── get_item_by_id
-│       │   ├── get_item_by_id.py
-│       │   ├── __init__.py
-│       │   └── test_get_item_by_id.py
+│       │   └── test_get_all_orders.py
+│       ├── get_order_by_id
+│       │   ├── __init__.py
+│       │   ├── errors.py
+│       │   ├── get_order_by_id.py
+│       │   ├── models.py
+│       │   └── test_get_order_by_id.py
 │       └── __init__.py
 ```
 
 By encapsulating each endpoint in its own directory, you gain two primary benefits:
 
 1. **Colocated Related Code**: By placing data models, business logic, unit tests, and HTTP handling in the same directory, developers no longer need to jump between distant folders to make a single functional change.
-2. **Flexible Complexity**: Not every endpoint is complex. Some might simply execute a short SQL query and return a response. Others might involve dynamic query building, third-party APIs, or complex authorization. This structure allows simple endpoints to exist in a single file, while complex ones can be broken down into separate `schemas.py` or `service.py` files within the endpoint's own folder.
+2. **Flexible Complexity**: Not every endpoint is complex. Some might simply execute a short SQL query and return a response (ex. `items` endpoints). Others might involve dynamic query building, third-party APIs, or complex authorization. This structure allows simple endpoints to exist in a single file, while complex ones can be broken down into separate files for models, business logic, and errors within the same directory (ex. `get_order_by_id`).
 
 ## When To Use This Structure (And When Not To)
 

@@ -12,5 +12,11 @@ engine = create_engine(
 
 
 def get_db() -> Generator[Connection, None, None]:
+    """Provide a database connection to the request handler.
+
+    Yields a raw SQLAlchemy Connection. In tests, this dependency is overridden
+    by conftest.py to point at a temporary database.
+    """
+
     with engine.connect() as connection:
         yield connection

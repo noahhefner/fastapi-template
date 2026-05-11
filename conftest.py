@@ -57,31 +57,32 @@ def client():
                 text("""
                 CREATE TABLE orders (
                     id TEXT PRIMARY KEY,
-                    address TEXT NOT NULL,
-                    placed_on TEXT NOT NULL
+                    quantity INTEGER NOT NULL,
+                    item_id TEXT NOT NULL,
+                    FOREIGN KEY (item_id) REFERENCES items(id)
                 )
             """)
             )
 
             conn.execute(
                 text(
-                    "INSERT INTO orders (id, address, placed_on) VALUES (:id, :address, :placed_on)"
+                    "INSERT INTO orders (id, quantity, item_id) VALUES (:id, :quantity, :item_id)"
                 ),
                 [
                     {
                         "id": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
-                        "address": "123 Main St, Springfield, USA",
-                        "placed_on": "2024-01-01T10:00:00",
+                        "quantity": 5,
+                        "item_id": "11111111-1111-1111-1111-111111111111",
                     },
                     {
                         "id": "bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
-                        "address": "456 Elm St, Metropolis, USA",
-                        "placed_on": "2024-02-15T14:30:00",
+                        "quantity": 3,
+                        "item_id": "22222222-2222-2222-2222-222222222222",
                     },
                     {
                         "id": "cccccccc-cccc-cccc-cccc-cccccccccccc",
-                        "address": "789 Oak Ave, Gotham, USA",
-                        "placed_on": "2024-03-10T09:15:00",
+                        "quantity": 7,
+                        "item_id": "33333333-3333-3333-3333-333333333333",
                     },
                 ],
             )

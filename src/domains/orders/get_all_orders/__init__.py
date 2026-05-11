@@ -11,20 +11,22 @@ from src.dependencies.get_user import User, get_user
 router = APIRouter()
 
 
-class AllItemsResponse(BaseModel):
+class AllOrdersResponse(BaseModel):
+    """Response model for the list of all orders."""
+
     id: UUID
-    name: str
     quantity: int
+    item_id: UUID
 
 
-@router.get("/", response_model=list[AllItemsResponse])
-async def get_all_items(
+@router.get("/", response_model=list[AllOrdersResponse])
+async def get_all_orders(
     db: Connection = Depends(get_db),
     user: User = Depends(get_user),
 ):
-    """Retrieve all items."""
+    """Retrieve all orders."""
 
-    query = text("SELECT id, name, quantity FROM items")
+    query = text("SELECT id, quantity, item_id FROM orders")
 
     try:
         result = db.execute(query)
