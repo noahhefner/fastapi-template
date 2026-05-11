@@ -1,4 +1,4 @@
-# FastAPI Repository Structure
+# FastAPI Project Template
 
 This repository presents a flexible, scalable way to structure a RESTful FastAPI application.
 
