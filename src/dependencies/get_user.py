@@ -14,8 +14,8 @@ class User(BaseModel):
 def get_user() -> User:
     """Get user info.
 
-    In a real application, this dependency could extract an access token from the request and/or 
-    lookup the users info from a database. For demonstration purposes, this function simply returns 
+    In a real application, this dependency could extract an access token from the request and/or
+    lookup the users info from a database. For demonstration purposes, this function simply returns
     a demo user object.
     """
 
