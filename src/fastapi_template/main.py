@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 
-from src.domains import router as domain_routers
+from fastapi_template.domains import router as domain_routers
 
 app = FastAPI(
     title="FastAPI Project Template",

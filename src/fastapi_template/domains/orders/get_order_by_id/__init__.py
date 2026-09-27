@@ -4,8 +4,9 @@ from uuid import UUID
 from fastapi import APIRouter, Depends, HTTPException, Path
 from sqlalchemy.engine import Connection
 
-from src.dependencies.get_db import get_db
-from src.dependencies.get_user import User, get_user
+from fastapi_template.dependencies.get_db import get_db
+from fastapi_template.dependencies.get_user import User, get_user
+from fastapi_template.domains.orders.get_order_by_id.errors import DatabaseError
 
 from .errors import OrderNotFoundError
 from .get_order_by_id import get_order_by_id
@@ -26,3 +27,5 @@ async def handle_get_order_by_id(
         return get_order_by_id(id=id, db=db)
     except OrderNotFoundError:
         raise HTTPException(status_code=404, detail="Order not found")
+    except DatabaseError:
+        raise HTTPException(status_code=500, detail="Database error.")

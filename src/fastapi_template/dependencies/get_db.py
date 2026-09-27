@@ -1,4 +1,4 @@
-from typing import Generator
+from collections.abc import Generator
 
 from sqlalchemy import create_engine
 from sqlalchemy.engine import Connection
@@ -11,7 +11,7 @@ engine = create_engine(
 )
 
 
-def get_db() -> Generator[Connection, None, None]:
+def get_db() -> Generator[Connection]:
     """Provide a database connection to the request handler.
 
     Yields a raw SQLAlchemy Connection. In tests, this dependency is overridden

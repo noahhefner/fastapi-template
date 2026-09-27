@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from . import items, orders
+from fastapi_template.domains import items, orders
 
 router = APIRouter()
 

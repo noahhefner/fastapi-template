@@ -1,12 +1,16 @@
+import logging
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 from sqlalchemy import text
 from sqlalchemy.engine import Connection
+from sqlalchemy.exc import SQLAlchemyError
 
-from src.dependencies.get_db import get_db
-from src.dependencies.get_user import User, get_user
+from fastapi_template.dependencies.get_db import get_db
+from fastapi_template.dependencies.get_user import User, get_user
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter()
 
@@ -31,7 +35,8 @@ async def get_all_items(
     try:
         result = db.execute(query)
         rows = result.mappings().all()
-    except Exception:
+    except SQLAlchemyError as e:
+        logger.error(f"Exception while getting all items: {e}")
         raise HTTPException(status_code=500, detail="Internal server error")
 
     return rows

@@ -1,3 +1,4 @@
+import logging
 from typing import Annotated
 from uuid import UUID
 
@@ -5,9 +6,12 @@ from fastapi import APIRouter, Depends, HTTPException, Path
 from pydantic import BaseModel
 from sqlalchemy import text
 from sqlalchemy.engine import Connection
+from sqlalchemy.exc import SQLAlchemyError
 
-from src.dependencies.get_db import get_db
-from src.dependencies.get_user import User, get_user
+from fastapi_template.dependencies.get_db import get_db
+from fastapi_template.dependencies.get_user import User, get_user
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter()
 
@@ -35,8 +39,8 @@ async def get_item_by_id(
     try:
         result = db.execute(query, params)
         row = result.mappings().one_or_none()
-    except Exception as e:
-        print(e)
+    except SQLAlchemyError as e:
+        logger.error(f"Database error while getting item by id: {e}")
         raise HTTPException(status_code=500, detail="Internal server error")
 
     if not row:

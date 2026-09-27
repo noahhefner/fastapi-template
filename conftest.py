@@ -4,8 +4,8 @@ import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine, text
 
-from src.dependencies.get_db import get_db
-from src.main import app
+from fastapi_template.dependencies.get_db import get_db
+from fastapi_template.main import app
 
 
 @pytest.fixture

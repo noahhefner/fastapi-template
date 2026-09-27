@@ -1,46 +1,43 @@
 # -----------------------
 # Stage 1: Build
 # -----------------------
-FROM ghcr.io/astral-sh/uv:python3.14-alpine AS builder
+FROM ghcr.io/astral-sh/uv:python3.14-alpine3.23 AS builder
 
-# Set work directory
 WORKDIR /app
 
-# Create virtual environment
-RUN uv venv
+# Copy dependency files first
+COPY pyproject.toml uv.lock ./
 
-# Copy pyproject.toml and uv.lock
-COPY pyproject.toml uv.lock .
-
-# Install Python modules
-RUN uv sync --no-cache --no-group dev
+# Install dependencies
+RUN uv sync --no-cache --no-group dev --no-install-project
 
 # -----------------------
 # Stage 2: Runtime
 # -----------------------
 FROM python:3.14-alpine3.23 AS runner
 
-# Set work directory
 WORKDIR /app
 
-# Copy venv from builder stage
+# Environment variables
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PATH="/app/.venv/bin:$PATH"
+
+# Copy virtual environment from builder
 COPY --from=builder /app/.venv /app/.venv
 
-# Copy application code
-COPY src .
+# Copy application code with correct ownership
+COPY --chown=appuser:appgroup src/ ./src/
+COPY --chown=appuser:appgroup pyproject.toml ./
 
-# Create a non-root user
-RUN addgroup -S demo && adduser -S demo -G demo
+# Create non-root user
+RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 
-# Give the non-root user permission to run the script
-RUN chown demo:demo /app/main.py && \
-    chmod u+rwx /app/main.py
+USER appuser
 
-    # Ensure venv is used
-ENV PATH="/app/.venv/bin:$PATH"
+# Document exposed port
+EXPOSE 8000
 
-# Switch to non-root user
-USER demo
-
-# Run the program
-CMD ["python", "main.py"]
+# Run with uvicorn
+ENTRYPOINT ["uvicorn"]
+CMD ["fastapi_template.main:app", "--host", "0.0.0.0", "--port", "8000"]
